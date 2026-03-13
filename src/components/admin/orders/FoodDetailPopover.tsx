@@ -7,7 +7,6 @@ import {
 import { FoodOrderItem } from "@/types";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
-import React from "react";
 
 type FoodDetailPopoverProps = {
   foodOrderItems: FoodOrderItem[];
@@ -27,12 +26,13 @@ const FoodDetailPopover = ({ foodOrderItems }: FoodDetailPopoverProps) => {
       >
         <Button
           variant="outline"
-          className="p-0 border-none shadow-none hover:bg-inheret"
+          className="p-0 border-none shadow-none hover:bg-inherit"
         >
           <h1>{isSingleFood(foodOrderItems.length)}</h1>
           <ChevronDown />
         </Button>
       </PopoverTrigger>
+
       <PopoverContent
         align="start"
         className="flex flex-col gap-3"
@@ -43,9 +43,9 @@ const FoodDetailPopover = ({ foodOrderItems }: FoodDetailPopoverProps) => {
             <div className="relative w-8 h-8">
               <Image
                 src={food.image}
-                layout="fill"
-                className="absolute rounded-sm"
-                alt="food-image"
+                fill
+                className="rounded-sm object-cover"
+                alt={food.foodName}
               />
             </div>
             <h1 className="w-[171px]">{food.foodName}</h1>

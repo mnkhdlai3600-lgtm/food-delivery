@@ -5,22 +5,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "ol9s3tbepydwhktg.public.blob.vercel-storage.com",
-      },
-      {
-        protocol: "https",
-        hostname: "i.pinimg.com",
+        hostname: "*",
       },
     ],
-  },
-  async redirects() {
-    return [
-      {
-        source: "/home",
-        destination: "/redirectRoute",
-        permanent: true,
-      },
-    ];
   },
 };
 

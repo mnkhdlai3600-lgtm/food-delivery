@@ -1,5 +1,4 @@
 import { NomNomLogo } from "@/components/icons";
-import Image from "next/legacy/image";
 
 export const HeaderLogo = ({
   textColor = ["white", "#EF4444", "white"],

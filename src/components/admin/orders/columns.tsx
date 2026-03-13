@@ -39,21 +39,23 @@ export const columns: ColumnDef<AllFoodOrders>[] = [
     accessorKey: "_id",
     header: () => <h1 className="text-foreground">№</h1>,
     cell: ({ row }) => (
-      <h1 className="px-4 text-foreground">{Number(row.id) + 1}</h1>
+      <h1 className="px-4 text-foreground">{row.index + 1}</h1>
     ),
   },
   {
-    accessorFn: (row) => row.user.email,
+    accessorFn: (row) => row.user_id?.email || "",
     header: "Customer",
-    cell: ({ row }) => <h1 className="px-4">{row.original.user.email}</h1>,
+    cell: ({ row }) => (
+      <h1 className="px-4">{row.original.user_id?.email || "-"}</h1>
+    ),
   },
   {
-    accessorFn: (row) => row.foodOrderItems,
+    accessorFn: (row) => row.foodOrderitems,
     size: 160,
     header: "Food",
     cell: ({ row }) => (
       <div className="flex items-center h-full px-4">
-        <FoodDetailPopover foodOrderItems={row.original.foodOrderItems} />
+        <FoodDetailPopover foodOrderItems={row.original.foodOrderitems || []} />
       </div>
     ),
   },
@@ -74,7 +76,9 @@ export const columns: ColumnDef<AllFoodOrders>[] = [
     size: 160,
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue?.from || !filterValue?.to) return true;
+
       const rowDate = new Date(row.getValue(columnId));
+
       return (
         rowDate >= new Date(filterValue.from) &&
         rowDate <= new Date(filterValue.to)
@@ -82,26 +86,30 @@ export const columns: ColumnDef<AllFoodOrders>[] = [
     },
     cell: ({ row }) => (
       <h1 className="flex items-center w-40 p-4 h-7">
-        {format(row.original.createdAt, "yyyy/MM/dd")}
+        {row.original.createdAt
+          ? format(new Date(row.original.createdAt), "yyyy/MM/dd")
+          : "-"}
       </h1>
     ),
   },
   {
-    accessorKey: "total",
+    accessorKey: "totalPrice",
     header: "Total",
     size: 160,
     cell: ({ row }) => (
-      <h1 className="flex items-center w-40 p-4 h-7">{`$${row.original.totalPrice}`}</h1>
+      <h1 className="flex items-center w-40 p-4 h-7">
+        ${row.original.totalPrice ?? 0}
+      </h1>
     ),
   },
   {
-    accessorFn: (row) => row.user.address,
+    accessorFn: (row) => row.user_id?.address || "",
     size: 235,
     header: "Delivery Address",
     cell: ({ row }) => (
       <div className="max-w-[435px] text-xs leading-4">
         <h1 className="h-8 px-4 overflow-hidden truncate text-wrap text-ellipsis">
-          {row.original.user.address}
+          {row.original.user_id?.address || "-"}
         </h1>
       </div>
     ),

@@ -1,3 +1,5 @@
+"use client";
+
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,15 +12,28 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { useState } from "react";
+import { createCategory } from "@/lib";
 
-export const AddCategoryModal = () => {
-  const [categoryName, setCategoryName] = useState<string>("");
+type Props = {
+  refresh: () => void;
+};
+
+export const AddCategoryModal = ({ refresh }: Props) => {
+  const [categoryName, setCategoryName] = useState("");
 
   const createCategoryName = async () => {
-    // await createCategory({ categoryName: categoryName });
-    setCategoryName("");
+    if (!categoryName.trim()) return;
+
+    try {
+      await createCategory(categoryName);
+
+      setCategoryName("");
+
+      refresh(); // category list refresh
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -28,9 +43,11 @@ export const AddCategoryModal = () => {
           <Plus width={16} height={16} strokeWidth={1} />
         </Button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[425px] flex flex-col gap-6">
         <div className="mb-4 flex justify-between items-center">
           <DialogTitle>Add new category</DialogTitle>
+
           <DialogClose asChild>
             <Button
               type="button"
@@ -41,21 +58,22 @@ export const AddCategoryModal = () => {
             </Button>
           </DialogClose>
         </div>
+
         <div className="flex flex-col gap-2">
           <Label htmlFor="name" className="font-semibold">
             Category name
           </Label>
-          <div>
-            <Input
-              id="name"
-              placeholder="Type category name..."
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-            />
-          </div>
+
+          <Input
+            id="name"
+            placeholder="Type category name..."
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+          />
         </div>
+
         <DialogFooter>
-          <DialogClose>
+          <DialogClose asChild>
             <Button type="button" className="mt-4" onClick={createCategoryName}>
               Add category
             </Button>

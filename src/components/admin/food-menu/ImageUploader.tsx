@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Image } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { UploadedImage } from "./UploadedImage";
 
 type ImageUploaderProps = {
@@ -33,7 +33,7 @@ export const ImageUploader = ({
   return (
     <div className="h-36 border-dashed border border-[#2563EB33] flex flex-col gap-2 justify-center items-center bg-[#2563EB0D] relative rounded-md">
       <Button className="rounded-full w-9 h-9 bg-background">
-        <Image color="#09090B" />
+        <ImageIcon color="#09090B" />
       </Button>
       <p className="text-sm">Choose a file or drag & drop it here</p>
       <input

@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Minus } from "lucide-react";
-import Image from "next/legacy/image";
 import { Food } from "@/types";
 import {
   Dialog,

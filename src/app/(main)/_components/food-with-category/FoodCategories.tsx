@@ -16,7 +16,7 @@ export const FoodCategories = () => {
         setLoading(false);
         return;
       }
-
+      console.log(data);
       const actualArray = Array.isArray(data) ? data : (data as any).data;
 
       setCategories(actualArray || []);

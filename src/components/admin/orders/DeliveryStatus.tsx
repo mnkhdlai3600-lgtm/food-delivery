@@ -1,4 +1,5 @@
 "use client";
+
 import { updateOrder } from "@/lib/services/update-order";
 import { AllFoodOrders, FoodOrderStatusEnum } from "@/types";
 import { ChevronsUpDown } from "lucide-react";
@@ -31,29 +32,31 @@ const DeliveryStatus = ({
 
     setPopoverOpen(false);
     await updateOrder(orderId, { status: option });
+
     setFoodOrders((prev) =>
       prev.map((order) => {
         if (order._id === orderId) {
           return { ...order, status: option };
         }
         return order;
-      })
+      }),
     );
   };
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <div
-          className={`border rounded-full px-2.5 flex items-center text-primary h-8 text-xs font-semibold gap-2.5 `}
+          className="border rounded-full px-2.5 flex items-center text-primary h-8 text-xs font-semibold gap-2.5 cursor-pointer"
           style={{
             borderColor: getBorderColor(status),
           }}
         >
-          <p className="text-">{status}</p>
+          <p>{status}</p>
           <ChevronsUpDown size={16} />
         </div>
       </PopoverTrigger>
+
       <PopoverContent className="flex flex-col p-1 w-[140px]" align="start">
         {statusOptions.map((option) => (
           <div
@@ -63,7 +66,7 @@ const DeliveryStatus = ({
           >
             <Badge
               variant="secondary"
-              className={`text-xs font-medium rounded-full`}
+              className="text-xs font-medium rounded-full"
             >
               {option.charAt(0).toUpperCase() + option.slice(1).toLowerCase()}
             </Badge>

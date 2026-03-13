@@ -1,33 +1,42 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { AllFoodOrders } from "@/types";
 
-export const fetchAllOrders = async () => {
+type FetchAllOrdersResponse = {
+  allFoodOrders: AllFoodOrders[];
+  error: boolean;
+};
+
+export const fetchAllOrders = async (): Promise<FetchAllOrdersResponse> => {
   try {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`${API_URL}/food-carts/get-all-orders`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/food-carts/get-all-orders`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
       },
-    });
+    );
 
-    const result = await response.json();
+    const result = await res.json();
 
-    if (!response.ok) {
-      throw new Error(result.message || "Захиалгууд авахад алдаа гарлаа");
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to fetch orders");
     }
 
     return {
-      allFoodOrders: result?.allFoodOrders || result?.data || [],
-      error: null,
+      allFoodOrders: result.data || [],
+      error: false,
     };
   } catch (error) {
-    console.error("FETCH_ALL_ORDERS_ERROR:", error);
+    console.error("fetchAllOrders error:", error);
 
     return {
       allFoodOrders: [],
-      error,
+      error: true,
     };
   }
 };

@@ -16,6 +16,7 @@ type FoodCardProps = {
   ingredients: string;
   image: string;
   _id: string;
+  categoryId?: string | { _id: string };
 };
 
 export const FoodCard = ({
@@ -24,10 +25,11 @@ export const FoodCard = ({
   ingredients,
   image,
   _id,
+  categoryId,
 }: FoodCardProps) => {
   const { addItem } = useContext(CartContext);
 
-  const food = { _id, foodName, price, ingredients, image };
+  const food = { _id, foodName, price, ingredients, image, categoryId };
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
@@ -40,10 +42,12 @@ export const FoodCard = ({
 
   const handleAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
     event.stopPropagation();
+
     addItem({
-      food: { _id, foodName, price, ingredients, image },
+      food: { _id, foodName, price, ingredients, image, categoryId },
       quantity: 1,
     });
+
     setShowAlert(true);
   };
 
@@ -84,7 +88,7 @@ export const FoodCard = ({
               </p>
             </div>
 
-            <div className="mt-2 text-sm text-[#09090B] font-normal line-clamp-2">
+            <div className="mt-2 text-sm font-normal line-clamp-2 text-[#09090B]">
               {ingredients}
             </div>
           </div>

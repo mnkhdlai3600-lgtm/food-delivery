@@ -1,29 +1,45 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export type Category = {
-  categoryName: string;
   _id: string;
+  categoryName: string;
+  foodIds?: {
+    _id: string;
+    foodName: string;
+    price: number;
+    image: string;
+    ingredients: string;
+    categoryId: string;
+  }[];
+  count?: number;
 };
 
-export const fetchCategories = async (): Promise<{
-  data: Category[];
-  error: boolean;
-}> => {
+export const fetchCategories = async () => {
   try {
-    const api = process.env.NEXT_PUBLIC_API_URL;
-
-    const response = await fetch(`${api}/food-category/get-category`, {
+    const response = await fetch(`${API_URL}/food-category/get-category`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
     });
-
-    if (!response.ok) {
-      throw new Error("Алдаа гарлаа");
-    }
 
     const result = await response.json();
 
-    return { data: result, error: false };
-  } catch (err) {
-    console.error(err);
-    return { data: [], error: true };
+    if (!response.ok) {
+      throw new Error(result.message || "Categories авахад алдаа гарлаа");
+    }
+
+    return {
+      data: result.data || [],
+      error: null,
+    };
+  } catch (error) {
+    console.error("FETCH_CATEGORIES_ERROR:", error);
+
+    return {
+      data: [],
+      error,
+    };
   }
 };

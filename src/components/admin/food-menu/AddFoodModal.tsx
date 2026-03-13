@@ -1,6 +1,8 @@
 "use client";
 
+import { ChangeEvent, useState } from "react";
 import { Plus, X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,10 +14,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { createFood } from "@/lib/services/create-food";
-import { ChangeEvent, useState } from "react";
-import { ImageUploader } from "./ImageUploader";
 import { uploadImage } from "@/lib/utils/uploadImage";
+import { ImageUploader } from "./ImageUploader";
 
 type AddFoodModalProps = {
   categoryName: string;
@@ -44,7 +46,7 @@ export const AddFoodModal = ({
     price: "",
     image: "",
     ingredients: "",
-    categoryId: categoryId,
+    categoryId,
   });
 
   const handleInputChange = (
@@ -52,8 +54,8 @@ export const AddFoodModal = ({
   ) => {
     const { name, value } = event.target;
 
-    setFoodInfo((prevFoodInfo) => ({
-      ...prevFoodInfo,
+    setFoodInfo((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
@@ -64,9 +66,14 @@ export const AddFoodModal = ({
       price: "",
       image: "",
       ingredients: "",
-      categoryId: categoryId,
+      categoryId,
     });
     setUploadedImage(undefined);
+  };
+
+  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || !event.target.files[0]) return;
+    setUploadedImage(event.target.files[0]);
   };
 
   const handleCreateFood = async () => {
@@ -78,7 +85,7 @@ export const AddFoodModal = ({
         price: parseFloat(foodInfo.price) || 0,
       };
 
-      let imageUrl: string = foodInfo.image;
+      let imageUrl = foodInfo.image;
 
       const file = uploadedImage;
       if (file) {
@@ -98,7 +105,7 @@ export const AddFoodModal = ({
       });
 
       if (error) {
-        console.error(error);
+        console.error("CREATE_FOOD_SERVICE_ERROR:", error);
         return;
       }
 
@@ -111,10 +118,6 @@ export const AddFoodModal = ({
     }
   };
 
-  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || !event.target.files[0]) return;
-    setUploadedImage(event.target.files[0]);
-  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -131,6 +134,7 @@ export const AddFoodModal = ({
       <DialogContent className="flex flex-col gap-6 sm:max-w-[425px]">
         <div className="mb-4 flex items-center justify-between">
           <DialogTitle>Add new Dish to {categoryName}</DialogTitle>
+
           <DialogClose asChild>
             <Button
               type="button"
