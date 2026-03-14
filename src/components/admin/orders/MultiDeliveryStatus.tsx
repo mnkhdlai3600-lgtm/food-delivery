@@ -1,4 +1,5 @@
 "use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,15 +19,15 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 type MultiDeliveryStatusProps = {
   selectedColumnIds: string[];
-  setRowSelection: Dispatch<SetStateAction<"">>;
-
-  setFoodOrders: Dispatch<SetStateAction<AllFoodOrders[] | undefined>>;
+  setRowSelection: Dispatch<SetStateAction<Record<string, boolean>>>;
+  setFoodOrdersAction: Dispatch<SetStateAction<AllFoodOrders[] | undefined>>;
 };
 
 const statusOptions = Object.values(FoodOrderStatusEnum);
 
 const renderSelectedRow = (selectedColumnCount: number) => {
   if (!selectedColumnCount) return null;
+
   return (
     <Badge className="rounded-full" variant="secondary">
       {selectedColumnCount}
@@ -37,7 +38,7 @@ const renderSelectedRow = (selectedColumnCount: number) => {
 const MultiDeliveryStatus = ({
   selectedColumnIds,
   setRowSelection,
-  setFoodOrders,
+  setFoodOrdersAction,
 }: MultiDeliveryStatusProps) => {
   const [statusState, setStatusState] = useState<FoodOrderStatusEnum>(
     FoodOrderStatusEnum.PENDING
@@ -49,7 +50,8 @@ const MultiDeliveryStatus = ({
 
   const handleSaveStatus = async () => {
     await updateMultipleOrder(selectedColumnIds, { status: statusState });
-    setFoodOrders((prev) =>
+
+    setFoodOrdersAction((prev) =>
       prev?.map((order) => {
         if (selectedColumnIds.includes(order._id)) {
           return { ...order, status: statusState };
@@ -57,7 +59,8 @@ const MultiDeliveryStatus = ({
         return order;
       })
     );
-    setRowSelection("");
+
+    setRowSelection({});
   };
 
   return (
@@ -67,38 +70,42 @@ const MultiDeliveryStatus = ({
           Change delivery state {renderSelectedRow(selectedColumnIds.length)}
         </Button>
       </DialogTrigger>
+
       <DialogContent className="w-[364px] gap-6">
         <DialogHeader className="flex flex-row items-center justify-between space-y-0">
           <DialogTitle className="mt-1 text-sm font-medium">
             Change delivery state
           </DialogTitle>
+
           <DialogClose asChild>
             <Button
               type="button"
-              className="px-2 py-2 -mt-2 rounded-full bg-muted w-7 h-7"
+              className="-mt-2 h-7 w-7 rounded-full bg-muted px-2 py-2"
               variant="secondary"
             >
               <X size={12} strokeWidth={1.2} className="text-border/" />
             </Button>
           </DialogClose>
         </DialogHeader>
-        <div className="flex justify-between ">
+
+        <div className="flex justify-between">
           {statusOptions.map((option) => (
             <Button
+              key={option}
               onClick={handleChangeStatus(option)}
               variant="secondary"
-              className={`w-24 h-8 text-xs font-medium rounded-full `}
-              key={option}
+              className="h-8 w-24 rounded-full text-xs font-medium"
               style={getOptionStyles(statusState, option)}
             >
               {option.charAt(0).toUpperCase() + option.slice(1).toLowerCase()}
             </Button>
           ))}
         </div>
+
         <DialogFooter className="w-full">
           <DialogClose asChild>
             <Button
-              className="w-full h-8 rounded-full"
+              className="h-8 w-full rounded-full"
               onClick={handleSaveStatus}
             >
               Save

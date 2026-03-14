@@ -1,16 +1,6 @@
 "use client";
 
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  ColumnFiltersState,
-  getFilteredRowModel,
-  getSortedRowModel,
-  SortingState,
-} from "@tanstack/react-table";
-import {
   Table,
   TableBody,
   TableCell,
@@ -18,26 +8,41 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import TableCustomHeader from "./TableCustomHeader";
-import { Dispatch, SetStateAction, useState } from "react";
 import { AllFoodOrders } from "@/types";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  TableMeta,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Dispatch, SetStateAction, useState } from "react";
+import TableCustomHeader from "./TableCustomHeader";
 
-type DataTableProps<TData, TValue> = {
+type DataTableMeta = TableMeta<AllFoodOrders> & {
+  setFoodOrdersAction: Dispatch<SetStateAction<AllFoodOrders[] | undefined>>;
+};
+
+type DataTableProps<TData extends { _id: string }, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  setFoodOrders: Dispatch<SetStateAction<AllFoodOrders[] | undefined>>;
+  setFoodOrdersAction: Dispatch<SetStateAction<AllFoodOrders[] | undefined>>;
 };
 
 export function DataTable<TData extends { _id: string }, TValue>({
   columns,
   data,
-  setFoodOrders,
+  setFoodOrdersAction,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const table = useReactTable({
+  const table = useReactTable<TData>({
     data,
     columns,
     onColumnFiltersChange: setColumnFilters,
@@ -52,44 +57,42 @@ export function DataTable<TData extends { _id: string }, TValue>({
       sorting,
     },
     meta: {
-      setFoodOrders: setFoodOrders,
-    },
+      setFoodOrdersAction,
+    } as DataTableMeta,
   });
+
   const selectedColumnIds = table
     .getFilteredSelectedRowModel()
     .rows.map((row) => row.original._id);
 
   return (
-    <div className="border rounded-md bg-background">
+    <div className="rounded-md border bg-background">
       <TableCustomHeader
         setRowSelection={setRowSelection}
         selectedColumnIds={selectedColumnIds}
         totalOrders={table.getRowCount()}
-        tableColumn={table.getColumn("createdAt")}
-        setFoodOrders={setFoodOrders}
+        tableColumn={table.getColumn("createdAt") as any}
+        setFoodOrdersAction={setFoodOrdersAction}
       />
+
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-accent h-[52px]">
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead
-                    key={header.id}
-                    className="px-4 text-sm font-medium"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
+            <TableRow key={headerGroup.id} className="h-[52px] bg-accent">
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="px-4 text-sm font-medium">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
+
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
@@ -100,7 +103,7 @@ export function DataTable<TData extends { _id: string }, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="h-[52px] p-0 text-muted-foreground text-sm font-medium"
+                    className="h-[52px] p-0 text-sm font-medium text-muted-foreground"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

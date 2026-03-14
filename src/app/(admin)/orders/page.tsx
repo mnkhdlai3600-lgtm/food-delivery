@@ -1,4 +1,5 @@
 "use client";
+
 import { columns } from "@/components/admin/orders/columns";
 import { DataTable } from "@/components/admin/orders/data-table";
 import TableSkeleton from "@/components/admin/orders/TableSkeleton";
@@ -26,10 +27,10 @@ export default function AdminOrders() {
 
   return (
     <div className="py-6 pl-6 pr-10">
-      <DataTable
+      <DataTable<AllFoodOrders, unknown>
         columns={columns}
         data={foodOrders || []}
-        setFoodOrders={setFoodOrders}
+        setFoodOrdersAction={setFoodOrders}
       />
     </div>
   );

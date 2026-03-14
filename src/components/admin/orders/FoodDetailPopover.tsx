@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -22,11 +24,11 @@ const FoodDetailPopover = ({ foodOrderItems }: FoodDetailPopoverProps) => {
     <Popover>
       <PopoverTrigger
         asChild
-        className="flex items-center justify-between w-40 h-full px-4 border-none shadow-none bg-inherit"
+        className="flex h-full w-40 items-center justify-between border-none bg-inherit px-4 shadow-none"
       >
         <Button
           variant="outline"
-          className="p-0 border-none shadow-none hover:bg-inherit"
+          className="border-none p-0 shadow-none hover:bg-inherit"
         >
           <h1>{isSingleFood(foodOrderItems.length)}</h1>
           <ChevronDown />
@@ -35,23 +37,44 @@ const FoodDetailPopover = ({ foodOrderItems }: FoodDetailPopoverProps) => {
 
       <PopoverContent
         align="start"
-        className="flex flex-col gap-3"
         alignOffset={-16}
+        className="flex flex-col gap-3"
       >
-        {foodOrderItems.map(({ food, quantity }, index) => (
-          <div key={index} className="flex gap-2.5 items-center text-sm">
-            <div className="relative w-8 h-8">
-              <Image
-                src={food.image}
-                fill
-                className="rounded-sm object-cover"
-                alt={food.foodName}
-              />
+        {foodOrderItems.map((item, index) => {
+          const food = item.food;
+
+          if (!food) {
+            return (
+              <div
+                key={index}
+                className="flex items-center gap-2.5 text-sm text-red-500"
+              >
+                <div className="h-8 w-8 rounded-sm bg-gray-200" />
+                <h1 className="w-[171px]">Food мэдээлэл олдсонгүй</h1>
+                <h1>{`x ${item.quantity}`}</h1>
+              </div>
+            );
+          }
+
+          return (
+            <div
+              key={food._id ?? index}
+              className="flex items-center gap-2.5 text-sm"
+            >
+              <div className="relative h-8 w-8 overflow-hidden rounded-sm bg-gray-200">
+                <Image
+                  src={food.image || "/placeholder-food.png"}
+                  fill
+                  className="object-cover"
+                  alt={food.foodName || "food-image"}
+                />
+              </div>
+
+              <h1 className="w-[171px]">{food.foodName || "Unknown food"}</h1>
+              <h1>{`x ${item.quantity}`}</h1>
             </div>
-            <h1 className="w-[171px]">{food.foodName}</h1>
-            <h1>{`x ${quantity}`}</h1>
-          </div>
-        ))}
+          );
+        })}
       </PopoverContent>
     </Popover>
   );
