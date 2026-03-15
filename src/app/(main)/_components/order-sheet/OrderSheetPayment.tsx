@@ -1,5 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { toast } from "sonner";
+
 import { SidebarDashLine } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,9 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createOrder, formatMoney } from "@/lib";
-import { useRouter } from "next/navigation";
-import { useContext } from "react";
-import { toast } from "sonner";
+
 import { CartContext, UserContext } from "../../context";
 
 type OrderSheetPaymentProps = {
@@ -22,9 +24,9 @@ type OrderSheetPaymentProps = {
 export const OrderSheetPayment = ({
   openModalAction,
 }: OrderSheetPaymentProps) => {
+  const router = useRouter();
   const { totalPrice, cartData, clearCart } = useContext(CartContext);
   const { user } = useContext(UserContext);
-  const router = useRouter();
 
   const totalPriceWithFee = Number(totalPrice) + 5000;
 
@@ -83,8 +85,8 @@ export const OrderSheetPayment = ({
   };
 
   const formattedTotalPrice = formatMoney(Number(totalPrice));
-  const formattedPriceWithFee = formatMoney(Number(totalPriceWithFee));
-  const formattedDeliveryFree = formatMoney(0);
+  const formattedPriceWithFee = formatMoney(totalPriceWithFee);
+  const formattedDeliveryFee = formatMoney(5000);
 
   return (
     <Card className="mt-6">
@@ -100,7 +102,7 @@ export const OrderSheetPayment = ({
 
         <div className="flex justify-between">
           <p className="font-light text-[#71717A]">Shipping</p>
-          <p className="font-bold">{formattedDeliveryFree}₮</p>
+          <p className="font-bold">{formattedDeliveryFee}₮</p>
         </div>
 
         <SidebarDashLine />

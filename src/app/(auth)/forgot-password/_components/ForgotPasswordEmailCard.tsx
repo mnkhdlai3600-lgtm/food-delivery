@@ -13,7 +13,8 @@ type ForgotPasswordEmailCardProps = {
   touched: { email?: boolean };
   handleChange: (_event: React.ChangeEvent<HTMLInputElement>) => void;
   handleBlur: (_event: React.FocusEvent<HTMLInputElement>) => void;
-  handleSubmit: () => void; // ✅ handleNext биш
+  handleSubmit: () => void;
+  submitError: string;
 };
 
 export const ForgotPasswordEmailCard = ({
@@ -23,6 +24,7 @@ export const ForgotPasswordEmailCard = ({
   handleChange,
   handleBlur,
   handleSubmit,
+  submitError,
 }: ForgotPasswordEmailCardProps) => {
   const formError = touched.email && errors.email;
 
@@ -45,14 +47,18 @@ export const ForgotPasswordEmailCard = ({
       <CardContent className="p-0">
         <form
           onSubmit={(e) => {
-            e.preventDefault(); // ✅ page reload зогсооно
-            handleSubmit(); // ✅ Formik submit
+            e.preventDefault();
+            handleSubmit();
           }}
           className="flex flex-col gap-6"
         >
           <div className="grid items-center w-full">
             <FormInput {...emailInputProps} />
           </div>
+
+          {submitError && (
+            <p className="text-sm font-medium text-red-500">{submitError}</p>
+          )}
 
           <FooterButtons
             buttonDisable={isEmailValid({ errors, values })}

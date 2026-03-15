@@ -37,17 +37,24 @@ export const SignUpEmailBox = ({
   };
 
   return (
-    <Card className="w-[416px] border-none shadow-none gap-6 flex flex-col">
+    <Card className="flex w-[416px] flex-col gap-6 border-none shadow-none">
       <DynamicCardHeader
         title="Create your account"
         description="Sign up to explore your favorite dishes."
       />
+
       <CardContent className="p-0">
-        <form onSubmit={handleNext}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleNext();
+          }}
+        >
           <div className="flex flex-col gap-6">
-            <div className="grid items-center w-full gap-6">
+            <div className="grid w-full items-center gap-6">
               <FormInput {...emailInputProps} />
             </div>
+
             <FooterButtons
               buttonDisable={isEmailValid({ errors, values })}
               buttonText="Let`s Go"
@@ -55,6 +62,7 @@ export const SignUpEmailBox = ({
           </div>
         </form>
       </CardContent>
+
       <SignUpFooter />
     </Card>
   );

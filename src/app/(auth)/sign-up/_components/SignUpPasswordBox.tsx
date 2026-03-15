@@ -15,8 +15,10 @@ type PasswordBoxProps = {
   touched: { password?: boolean; passwordConfirmation?: boolean };
   handleChange: (_event: React.ChangeEvent<HTMLInputElement>) => void;
   handleBlur: (_event: React.FocusEvent<HTMLInputElement>) => void;
-  handleCreateAccount: () => void;
+  handleCreateAccount: (_e?: React.FormEvent<HTMLFormElement>) => void;
   handleBack: () => void;
+  isLoading: boolean;
+  submitError: string;
 };
 
 export const SignUpPasswordBox = ({
@@ -27,14 +29,16 @@ export const SignUpPasswordBox = ({
   handleBlur,
   handleCreateAccount,
   handleBack,
+  isLoading,
+  submitError,
 }: PasswordBoxProps) => {
-  const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const [isShowPassword, setIsShowPassword] = useState(false);
 
   const formErrorPassword = touched.password && errors.password;
   const formErrorPasswordConfirmation =
     touched.passwordConfirmation && errors.passwordConfirmation;
 
-  const showPass = isShowPassword ? "" : "password";
+  const showPass = isShowPassword ? "text" : "password";
 
   const passwordInputProps = {
     name: "password",
@@ -62,14 +66,15 @@ export const SignUpPasswordBox = ({
     !!errors.password ||
     !!errors.passwordConfirmation ||
     !values.password ||
-    !values.passwordConfirmation;
+    !values.passwordConfirmation ||
+    isLoading;
 
   const handleShowPassword = () => {
     setIsShowPassword(!isShowPassword);
   };
 
   return (
-    <Card className="w-[416px] border-none shadow-none gap-6 flex flex-col">
+    <Card className="flex w-[416px] flex-col gap-6 border-none shadow-none">
       <BackButton handleClick={handleBack} />
 
       <DynamicCardHeader
@@ -79,8 +84,8 @@ export const SignUpPasswordBox = ({
 
       <CardContent className="p-0">
         <form onSubmit={handleCreateAccount} className="flex flex-col gap-6">
-          <div className="grid items-center w-full gap-6">
-            <div className="flex flex-col space-y-1.5 gap-4">
+          <div className="grid w-full items-center gap-6">
+            <div className="flex flex-col gap-4 space-y-1.5">
               <FormInput {...passwordInputProps} />
               <FormInput {...passwordConfirmationProps} />
 
@@ -88,14 +93,22 @@ export const SignUpPasswordBox = ({
                 <Checkbox id="showPass" onCheckedChange={handleShowPassword} />
                 <label
                   htmlFor="showPass"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+                  className="text-muted-foreground text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   Show password
                 </label>
               </div>
             </div>
           </div>
-          <FooterButtons buttonDisable={buttonDisable} buttonText="Let`s Go" />
+
+          {submitError && (
+            <p className="text-sm font-medium text-red-500">{submitError}</p>
+          )}
+
+          <FooterButtons
+            buttonDisable={buttonDisable}
+            buttonText={isLoading ? "Creating..." : "Let`s Go"}
+          />
         </form>
       </CardContent>
 

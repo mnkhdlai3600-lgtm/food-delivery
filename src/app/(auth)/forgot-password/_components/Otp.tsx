@@ -22,7 +22,7 @@ import { RefreshCwIcon, Loader2 } from "lucide-react";
 
 interface InputOTPFormProps {
   email: string;
-  onSuccess: () => void;
+  onSuccess: (token?: string) => void;
 }
 
 export function InputOTPForm({ email, onSuccess }: InputOTPFormProps) {
@@ -36,10 +36,9 @@ export function InputOTPForm({ email, onSuccess }: InputOTPFormProps) {
 
     try {
       setIsLoading(true);
-      await handleVerifyOtp(email, otp);
-      onSuccess();
+      const data = await handleVerifyOtp(email, otp);
+      onSuccess(data?.token);
     } catch (error: any) {
-      console.error("OTP Error:", error);
       setErrorMessage(error.message || "OTP баталгаажуулахад алдаа гарлаа.");
     } finally {
       setIsLoading(false);
@@ -61,7 +60,7 @@ export function InputOTPForm({ email, onSuccess }: InputOTPFormProps) {
           <div className="flex items-center justify-between">
             <FieldLabel>Verification code</FieldLabel>
             <Button variant="outline" size="sm" className="gap-2" type="button">
-              <RefreshCwIcon className="w-4 h-4" />
+              <RefreshCwIcon className="h-4 w-4" />
               Resend
             </Button>
           </div>
@@ -80,7 +79,7 @@ export function InputOTPForm({ email, onSuccess }: InputOTPFormProps) {
                 <InputOTPSlot
                   key={i}
                   index={i}
-                  className="w-12 h-14 text-xl border-2 rounded-xl"
+                  className="h-14 w-12 rounded-xl border-2 text-xl"
                 />
               ))}
             </InputOTPGroup>
@@ -90,14 +89,14 @@ export function InputOTPForm({ email, onSuccess }: InputOTPFormProps) {
                 <InputOTPSlot
                   key={i}
                   index={i}
-                  className="w-12 h-14 text-xl border-2 rounded-xl"
+                  className="h-14 w-12 rounded-xl border-2 text-xl"
                 />
               ))}
             </InputOTPGroup>
           </InputOTP>
 
           {errorMessage && (
-            <p className="text-sm font-medium text-red-500 mt-2">
+            <p className="mt-2 text-sm font-medium text-red-500">
               {errorMessage}
             </p>
           )}
@@ -113,11 +112,11 @@ export function InputOTPForm({ email, onSuccess }: InputOTPFormProps) {
       <CardFooter className="flex flex-col gap-4">
         <Button
           type="button"
-          className="w-full bg-black hover:bg-gray-800 text-white py-6 rounded-xl text-lg"
+          className="w-full rounded-xl bg-black py-6 text-lg text-white hover:bg-gray-800"
           onClick={handleConfirmOTP}
           disabled={otp.length !== 6 || isLoading}
         >
-          {isLoading ? <Loader2 className="animate-spin mr-2" /> : "Verify"}
+          {isLoading ? <Loader2 className="mr-2 animate-spin" /> : "Verify"}
         </Button>
       </CardFooter>
     </Card>

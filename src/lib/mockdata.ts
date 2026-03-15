@@ -1,14 +1,14 @@
 import { FoodOrderStatusEnum, UserRoleEnum } from "@/types";
 
-
 export const mockData = [
   {
     _id: "6772231f2ef39e0ffbc0fcf2",
     user: {
       _id: "67722047cda689533b75309a",
       email: "tugu@gmail.com",
-      address: "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоонСБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоон20",
-      role: UserRoleEnum.ADMIN,
+      address:
+        "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоонСБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоон20",
+      role: UserRoleEnum.Admin,
       orderedFoods: [],
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -42,8 +42,9 @@ export const mockData = [
     user: {
       _id: "67722047cda689533b75309a",
       email: "tugdashdasadju@gmail.com",
-      address: "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоонСБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоон20",
-      role: UserRoleEnum.ADMIN,
+      address:
+        "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоонСБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdsen emneleg | 100 айлын гүүрэн гарцны хойд талд 4д ногоон20",
+      role: UserRoleEnum.Admin,
       orderedFoods: [],
       createdAt: new Date(),
       updatedAt: new Date(),

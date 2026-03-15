@@ -23,9 +23,7 @@ export const ConfirmEmail = ({
   const handleContinue = async () => {
     try {
       setLoading(true);
-
       await handleSendPasswordResetRequest({ email });
-
       handleNext();
     } catch (error) {
       console.error("Resend error:", error);
@@ -35,7 +33,7 @@ export const ConfirmEmail = ({
   };
 
   return (
-    <Card className="w-[416px] border-none shadow-none gap-6 flex flex-col">
+    <Card className="flex w-[416px] flex-col gap-6 border-none shadow-none">
       <BackButton handleClick={handlePrevious} />
 
       <div>
@@ -46,11 +44,11 @@ export const ConfirmEmail = ({
         </p>
       </div>
 
-      <CardContent className="p-0 h-fit">
+      <CardContent className="h-fit p-0">
         <FooterButtons
           buttonText={loading ? "Sending..." : "Continue"}
           buttonDisable={loading}
-          handleClick={handleContinue} // ✅ НЭГ Л CLICK PROP
+          handleClick={handleContinue}
         />
       </CardContent>
     </Card>

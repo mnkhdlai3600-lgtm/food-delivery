@@ -10,7 +10,7 @@ import { DynamicCardHeader } from "@/components/card";
 import { LoginFooter } from "./LoginFooter";
 import { FooterButtons } from "@/components/auth";
 import { loginInitialValues } from "@/constants";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/app/(main)/context";
 
 export const Login = () => {
@@ -24,12 +24,23 @@ export const Login = () => {
     onSubmit: async (values) => {
       try {
         setSubmitError("");
+
+        localStorage.setItem("savedEmail", values.email);
+
         await login(values.email, values.password);
       } catch (error: any) {
         setSubmitError(error.message || "Нэвтрэхэд алдаа гарлаа");
       }
     },
   });
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("savedEmail");
+
+    if (savedEmail) {
+      formik.setFieldValue("email", savedEmail);
+    }
+  }, []);
 
   const formErrorPassword = formik.touched.password && formik.errors.password;
   const formErrorEmail = formik.touched.email && formik.errors.email;
@@ -38,7 +49,10 @@ export const Login = () => {
     name: "email",
     placeholder: "Email",
     value: formik.values.email,
-    onChange: formik.handleChange,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSubmitError("");
+      formik.handleChange(e);
+    },
     onBlur: formik.handleBlur,
     inputError: formErrorEmail,
     inputErrorMessage: formik.errors.email,
@@ -49,7 +63,10 @@ export const Login = () => {
     placeholder: "Password",
     type: "password",
     value: formik.values.password,
-    onChange: formik.handleChange,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSubmitError("");
+      formik.handleChange(e);
+    },
     onBlur: formik.handleBlur,
     inputError: formErrorPassword,
     inputErrorMessage: formik.errors.password,

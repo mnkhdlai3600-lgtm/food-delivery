@@ -26,51 +26,60 @@ const DeliveryStatus = ({
   setFoodOrders,
 }: DeliveryStatusProps) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSaveStatus = (option: FoodOrderStatusEnum) => async () => {
-    if (status === option) return;
+  const handleSaveStatus = async (option: FoodOrderStatusEnum) => {
+    if (status === option || loading) return;
 
-    setPopoverOpen(false);
-    await updateOrder(orderId, { status: option });
+    try {
+      setLoading(true);
 
-    setFoodOrders((prev) =>
-      prev.map((order) => {
-        if (order._id === orderId) {
-          return { ...order, status: option };
-        }
-        return order;
-      }),
-    );
+      const updatedOrder = await updateOrder(orderId, { status: option });
+
+      setFoodOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId
+            ? { ...order, status: updatedOrder?.status || option }
+            : order,
+        ),
+      );
+
+      setPopoverOpen(false);
+    } catch (error) {
+      console.error("Status update error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
-        <div
+        <button
+          type="button"
           className="border rounded-full px-2.5 flex items-center text-primary h-8 text-xs font-semibold gap-2.5 cursor-pointer"
-          style={{
-            borderColor: getBorderColor(status),
-          }}
+          style={{ borderColor: getBorderColor(status) }}
         >
-          <p>{status}</p>
+          <p>{status.toUpperCase()}</p>
           <ChevronsUpDown size={16} />
-        </div>
+        </button>
       </PopoverTrigger>
 
       <PopoverContent className="flex flex-col p-1 w-[140px]" align="start">
         {statusOptions.map((option) => (
-          <div
-            className="flex items-center p-2 rounded-sm cursor-pointer hover:bg-black/15"
+          <button
             key={option}
-            onClick={handleSaveStatus(option)}
+            type="button"
+            className="flex items-center p-2 rounded-sm cursor-pointer hover:bg-black/15"
+            onClick={() => handleSaveStatus(option)}
           >
             <Badge
               variant="secondary"
               className="text-xs font-medium rounded-full"
             >
-              {option.charAt(0).toUpperCase() + option.slice(1).toLowerCase()}
+              {option.charAt(0).toUpperCase() + option.slice(1)}
             </Badge>
-          </div>
+          </button>
         ))}
       </PopoverContent>
     </Popover>

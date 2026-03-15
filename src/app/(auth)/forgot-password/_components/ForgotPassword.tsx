@@ -9,12 +9,12 @@ import {
 import { ForgotPasswordEmailCard } from "./ForgotPasswordEmailCard";
 import { ConfirmEmail } from "./ConfirmEmail";
 import { InputOTPForm } from "./Otp";
-import ResetPassword from "./ResetPassword"; // Шинэ компонент
+import ResetPassword from "./ResetPassword";
 
 export const ForgotPassword = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
-  // OTP-оос ирэх token-ийг хадгалах (хэрэв backend token буцаадаг бол)
   const [resetToken, setResetToken] = useState<string>("");
+  const [submitError, setSubmitError] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -23,10 +23,11 @@ export const ForgotPassword = () => {
     validationSchema: determineValidationSchema(currentStep),
     onSubmit: async (values) => {
       try {
+        setSubmitError("");
         await handleSendPasswordResetRequest(values);
         setCurrentStep(1);
-      } catch (error) {
-        console.error("Error sending reset request:", error);
+      } catch (error: any) {
+        setSubmitError(error.message || "Error sending reset request");
       }
     },
   });
@@ -42,9 +43,13 @@ export const ForgotPassword = () => {
           values={formik.values}
           errors={formik.errors}
           touched={formik.touched}
-          handleChange={formik.handleChange}
+          handleChange={(e) => {
+            setSubmitError("");
+            formik.handleChange(e);
+          }}
           handleBlur={formik.handleBlur}
           handleSubmit={formik.handleSubmit}
+          submitError={submitError}
         />
       )}
 
@@ -60,15 +65,13 @@ export const ForgotPassword = () => {
         <InputOTPForm
           email={formik.values.email}
           onSuccess={(token?: string) => {
-            if (token) setResetToken(token); // Backend-ээс token ирвэл хадгална
-            setCurrentStep(3); // ✅ OTP амжилттай бол 3-р алхам руу
+            if (token) setResetToken(token);
+            setCurrentStep(3);
           }}
         />
       )}
 
-      {currentStep === 3 && (
-        <ResetPassword token={resetToken} email={formik.values.email} />
-      )}
+      {currentStep === 3 && <ResetPassword token={resetToken} />}
     </>
   );
 };

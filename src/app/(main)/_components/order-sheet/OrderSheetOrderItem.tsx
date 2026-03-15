@@ -1,7 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Map, Soup, Timer } from "lucide-react";
 
-export const OrderSheetOrderItem = () => {
+type OrderSheetOrderItemProps = {
+  address: string;
+};
+
+export const OrderSheetOrderItem = ({ address }: OrderSheetOrderItemProps) => {
   return (
     <div className="space-y-3">
       <div className="flex item-center justify-between">
@@ -28,8 +32,7 @@ export const OrderSheetOrderItem = () => {
       <div className="flex item-center gap-2">
         <Map strokeWidth={1} size={16} />
         <p className="text-muted-foreground text-xs truncate w-11/12">
-          СБД, 12-р хороо, СБД нэгдсэн эмнэлэг 100 айлын гүүрэн гарцны хойд талд
-          4д ногоон
+          {address || "Хаяг байхгүй"}
         </p>
       </div>
     </div>

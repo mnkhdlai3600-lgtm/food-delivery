@@ -1,31 +1,66 @@
 import * as Yup from "yup";
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+
 export const emailValidationSchema = Yup.object({
   email: Yup.string()
-    .required("This field is required")
-    .test("email", "Enter a valid email", (value) => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(value);
-    }),
+    .required("Имэйлээ оруулна уу")
+    .matches(emailRegex, "Зөв имэйл хаяг оруулна уу"),
+});
+
+export const loginValidationSchema = Yup.object({
+  email: Yup.string()
+    .required("Имэйлээ оруулна уу")
+    .matches(emailRegex, "Зөв имэйл хаяг оруулна уу"),
+
+  password: Yup.string().required("Нууц үгээ оруулна уу"),
+});
+
+export const signUpValidationSchema = Yup.object({
+  email: Yup.string()
+    .required("Имэйлээ оруулна уу")
+    .matches(emailRegex, "Зөв имэйл хаяг оруулна уу"),
+
+  password: Yup.string()
+    .required("Нууц үгээ оруулна уу")
+    .matches(
+      passwordRegex,
+      "Нууц үг хамгийн багадаа 8 тэмдэгт, 1 том үсэг, 1 жижиг үсэг, 1 тусгай тэмдэгт агуулсан байх ёстой",
+    ),
+
+  passwordConfirmation: Yup.string()
+    .required("Нууц үгээ давтаж оруулна уу")
+    .oneOf([Yup.ref("password")], "Нууц үг таарахгүй байна"),
 });
 
 export const passwordValidationSchema = Yup.object({
   password: Yup.string()
-    .required("Password is required")
-    .min(6, "Weak password. Use at least 6 numbers and symbols."),
-  passwordConfirmation: Yup.string().oneOf(
-    [Yup.ref("password"), undefined],
-    "Those password did’t match, Try again"
-  ),
+    .required("Нууц үгээ оруулна уу")
+    .matches(
+      passwordRegex,
+      "Нууц үг хамгийн багадаа 8 тэмдэгт, 1 том үсэг, 1 жижиг үсэг, 1 тусгай тэмдэгт агуулсан байх ёстой",
+    ),
+
+  passwordConfirmation: Yup.string()
+    .required("Нууц үгээ давтаж оруулна уу")
+    .oneOf([Yup.ref("password")], "Нууц үг таарахгүй байна"),
 });
 
-export const loginValidationSchema = emailValidationSchema.shape({
-  password: Yup.string().required("Password is required"),
+export const resetPasswordValidationSchema = Yup.object({
+  password: Yup.string()
+    .required("Нууц үгээ оруулна уу")
+    .matches(
+      passwordRegex,
+      "Нууц үг хамгийн багадаа 8 тэмдэгт, 1 том үсэг, 1 жижиг үсэг, 1 тусгай тэмдэгт агуулсан байх ёстой",
+    ),
+
+  confirmPassword: Yup.string()
+    .required("Нууц үгээ давтаж оруулна уу")
+    .oneOf([Yup.ref("password")], "Нууц үг таарахгүй байна"),
 });
 
 export const determineValidationSchema = (currentStep: number) => {
-  if (currentStep === 0) {
-    return emailValidationSchema;
-  }
+  if (currentStep === 0) return emailValidationSchema;
   return passwordValidationSchema;
 };

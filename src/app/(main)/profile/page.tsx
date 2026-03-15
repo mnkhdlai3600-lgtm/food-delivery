@@ -77,7 +77,7 @@ const ProfilePage = () => {
       if (userAge.trim()) body.user_age = Number(userAge);
 
       const data = await handleUpdateUser(body);
-      const updatedUser = data?.data;
+      const updatedUser = data.data || data.user;
 
       if (updatedUser) {
         localStorage.setItem("user", JSON.stringify(updatedUser));

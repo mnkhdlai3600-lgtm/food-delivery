@@ -1,6 +1,6 @@
 "use client";
 
-import { handleSignIn } from "@/lib";
+import { handleSignIn, SignInResponseType } from "@/lib/services/auth";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -35,9 +35,9 @@ type UserContextType = {
 export const UserContext = createContext<UserContextType>({
   user: undefined,
   loading: true,
-  setUser: () => {},
-  login: async () => {},
-  logout: () => {},
+  setUser: () => undefined,
+  login: async () => undefined,
+  logout: () => undefined,
   isLoggedIn: false,
 });
 
@@ -49,24 +49,26 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const login = async (email: string, password: string) => {
-    const data = await handleSignIn({ email, password });
+    const data: SignInResponseType = await handleSignIn({ email, password });
 
-    const accessToken = data?.token || data?.accessToken;
+    const accessToken = data.token || data.accessToken;
 
     if (!accessToken) {
       throw new Error("Token ирсэнгүй");
     }
 
+    const apiUser = data.data || data.user;
+
     const loggedUser: User = {
-      _id: data?.data?._id || data?.user?._id || "",
-      email: data?.data?.email || data?.user?.email || email,
-      userName: data?.data?.userName || data?.user?.userName || "",
-      phoneNumber: data?.data?.phoneNumber || data?.user?.phoneNumber,
-      user_age: data?.data?.user_age || data?.user?.user_age,
-      address: data?.data?.address || data?.user?.address || "",
-      isVerified: data?.data?.isVerified || data?.user?.isVerified,
-      phone_verified: data?.data?.phone_verified || data?.user?.phone_verified,
-      role: data?.data?.role || data?.user?.role,
+      _id: apiUser?._id || "",
+      email: apiUser?.email || email,
+      userName: apiUser?.userName || "",
+      phoneNumber: apiUser?.phoneNumber,
+      user_age: apiUser?.user_age,
+      address: apiUser?.address || "",
+      isVerified: apiUser?.isVerified,
+      phone_verified: apiUser?.phone_verified,
+      role: apiUser?.role,
     };
 
     localStorage.setItem("token", accessToken);
@@ -105,8 +107,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("USER_PARSE_ERROR:", error);
+      } catch {
         localStorage.removeItem("user");
       }
     }

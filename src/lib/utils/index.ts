@@ -30,8 +30,9 @@ export const getBorderColor = (status: FoodOrderStatusEnum) => {
 
   const statusToColorMap: Record<FoodOrderStatusEnum, string> = {
     [FoodOrderStatusEnum.PENDING]: "rgb(239, 68, 68)",
-    [FoodOrderStatusEnum.CANCELED]: "rgb(229, 231, 235)",
-    [FoodOrderStatusEnum.DELIVERED]: "rgb(34, 197, 94)",
+    [FoodOrderStatusEnum.PREPARING]: "rgb(234, 179, 8)",
+    [FoodOrderStatusEnum.COMPLETED]: "rgb(34, 197, 94)",
+    [FoodOrderStatusEnum.CANCELLED]: "rgb(229, 231, 235)",
   };
 
   return statusToColorMap[status];

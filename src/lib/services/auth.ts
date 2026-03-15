@@ -1,175 +1,174 @@
 import {
+  CurrentUserResponseType,
+  LoginTypes,
   PasswordResetTypes,
   SendPasswordResetMail,
+  SignUpResponseType,
   SignUpTypes,
+  UpdateUserResponseType,
+  VerifyEmailResponseType,
 } from "@/constants/auth";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://project-7-backend-0wmd.onrender.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const handleSignUp = async ({ email, password }: SignUpTypes) => {
-  const endPoint = "/authentication/sign-up";
+type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-  try {
-    const response = await fetch(`${API_URL}${endPoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Бүртгэл амжилтгүй");
-    return data;
-  } catch (error: any) {
-    console.error("SignUp Error:", error.message);
-    throw error;
-  }
+type RequestOptions = {
+  endpoint: string;
+  method?: RequestMethod;
+  body?: unknown;
+  token?: string | null;
 };
 
-export const handleSignIn = async ({ email, password }: SignUpTypes) => {
-  const endPoint = "/authentication/sign-in";
+export type UserResponseType = {
+  _id?: string;
+  email?: string;
+  userName?: string;
+  phoneNumber?: number;
+  user_age?: number;
+  address?: string;
+  isVerified?: boolean;
+  phone_verified?: boolean;
+  role?: string;
+};
 
-  try {
-    const response = await fetch(`${API_URL}${endPoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+export type SignInResponseType = {
+  message?: string;
+  token?: string;
+  accessToken?: string;
+  data?: UserResponseType;
+  user?: UserResponseType;
+};
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Нэвтрэхэд алдаа гарлаа");
-    return data;
-  } catch (error: any) {
-    console.error("SignIn Error:", error.message);
-    throw error;
+const request = async <T>({
+  endpoint,
+  method = "GET",
+  body,
+  token,
+}: RequestOptions): Promise<T> => {
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+
+  const contentType = response.headers.get("content-type");
+
+  let data: unknown = null;
+
+  if (contentType && contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    const text = await response.text();
+    throw new Error(text || "Серверээс буруу хариу ирлээ");
   }
+
+  if (!response.ok) {
+    const errorData = data as { message?: string };
+    throw new Error(errorData.message || "Алдаа гарлаа");
+  }
+
+  return data as T;
+};
+
+export const handleSignUp = async ({
+  email,
+  password,
+}: SignUpTypes): Promise<SignUpResponseType> => {
+  return request<SignUpResponseType>({
+    endpoint: "/authentication/sign-up",
+    method: "POST",
+    body: { email, password },
+  });
+};
+
+export const handleSignIn = async ({
+  email,
+  password,
+}: LoginTypes): Promise<SignInResponseType> => {
+  return request<SignInResponseType>({
+    endpoint: "/authentication/sign-in",
+    method: "POST",
+    body: { email, password },
+  });
 };
 
 export const handleSendPasswordResetRequest = async ({
   email,
-}: SendPasswordResetMail) => {
-  const endPoint = "/authentication/reset-password-request";
+}: SendPasswordResetMail): Promise<{ message?: string }> => {
+  return request<{ message?: string }>({
+    endpoint: "/authentication/reset-password-request",
+    method: "POST",
+    body: { email },
+  });
+};
 
-  try {
-    const response = await fetch(`${API_URL}${endPoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-
-    const data = await response.json();
-    console.log(response);
-    if (!response.ok)
-      throw new Error(data.message || "Имэйл илгээхэд алдаа гарлаа");
-    return data;
-  } catch (error: any) {
-    console.error("Forgot Password Mail Error:", error.message);
-    throw error;
-  }
+export const handleVerifyEmail = async (
+  token: string,
+): Promise<VerifyEmailResponseType> => {
+  return request<VerifyEmailResponseType>({
+    endpoint: "/authentication/verify-email",
+    method: "POST",
+    body: { token },
+  });
 };
 
 export const handlePasswordReset = async ({
   token,
   password,
-}: PasswordResetTypes) => {
-  const endPoint = "/authentication/reset-password";
-
-  try {
-    const response = await fetch(`${API_URL}${endPoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, password }),
-    });
-
-    const data = await response.json();
-    if (!response.ok)
-      throw new Error(data.message || "Нууц үг шинэчлэхэд алдаа гарлаа");
-    return data;
-  } catch (error: any) {
-    console.error("Password Reset Error:", error.message);
-    throw error;
-  }
-};
-export const handleVerifyOtp = async (email: string, otp: string) => {
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
-  const endPoint = "/authentication/verify-reset-password";
-
-  try {
-    const response = await fetch(`${API_URL}${endPoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-    });
-
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      const text = await response.text();
-      console.error("Серверээс ирсэн буруу хариулт:", text);
-      throw new Error(
-        "Сервертэй холбогдоход алдаа гарлаа (API хаяг буруу байж магадгүй)",
-      );
-    }
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "OTP код буруу байна");
-    }
-
-    return data;
-  } catch (error: any) {
-    console.error("OTP Verification Error:", error.message);
-    throw error;
-  }
+}: PasswordResetTypes): Promise<{ message?: string }> => {
+  return request<{ message?: string }>({
+    endpoint: "/authentication/reset-password",
+    method: "PUT",
+    body: {
+      token,
+      newPassword: password,
+    },
+  });
 };
 
-export const handleVerifyEmail = async (token: string) => {
-  const endPoint = "/authentication/verify-email";
-
-  try {
-    const response = await fetch(`${API_URL}${endPoint}?token=${token}`, {
-      method: "GET",
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Email баталгаажуулахад алдаа гарлаа");
-    }
-
-    return data;
-  } catch (error: any) {
-    console.error("Verify Email Error:", error.message);
-    throw error;
-  }
+export type VerifyOtpResponseType = {
+  message?: string;
+  token?: string;
 };
+
+export const handleVerifyOtp = async (
+  email: string,
+  otp: string,
+): Promise<VerifyOtpResponseType> => {
+  return request<VerifyOtpResponseType>({
+    endpoint: "/authentication/verify-reset-password",
+    method: "POST",
+    body: { email, otp },
+  });
+};
+
 export const handleUpdateUser = async (body: {
   userName?: string;
   phoneNumber?: number;
   user_age?: number;
   address?: string;
-}) => {
+}): Promise<UpdateUserResponseType> => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/authentication/update-user`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа");
-  }
-
-  return data;
+  return request<UpdateUserResponseType>({
+    endpoint: "/authentication/update-user",
+    method: "PUT",
+    body,
+    token,
+  });
 };
+
+export const handleGetCurrentUser =
+  async (): Promise<CurrentUserResponseType> => {
+    const token = localStorage.getItem("token");
+
+    return request<CurrentUserResponseType>({
+      endpoint: "/authentication/current-user",
+      method: "GET",
+      token,
+    });
+  };

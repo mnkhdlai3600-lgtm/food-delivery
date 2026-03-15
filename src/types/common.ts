@@ -1,16 +1,18 @@
 export enum FoodOrderStatusEnum {
-  DELIVERED = "DELIVERED",
-  PENDING = "PENDING",
-  CANCELED = "CANCELED",
+  PENDING = "pending",
+  PREPARING = "preparing",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }
 
 export const statusClasses: Record<FoodOrderStatusEnum, string> = {
   [FoodOrderStatusEnum.PENDING]: "border-red-500",
-  [FoodOrderStatusEnum.CANCELED]: "border-border",
-  [FoodOrderStatusEnum.DELIVERED]: "border-green-500",
+  [FoodOrderStatusEnum.PREPARING]: "border-yellow-500",
+  [FoodOrderStatusEnum.COMPLETED]: "border-green-500",
+  [FoodOrderStatusEnum.CANCELLED]: "border-border",
 };
 
 export enum UserRoleEnum {
-  USER = "USER",
-  ADMIN = "ADMIN",
+  User = "User",
+  Admin = "Admin",
 }
