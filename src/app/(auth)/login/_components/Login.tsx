@@ -85,7 +85,7 @@ export const Login = () => {
   };
 
   return (
-    <Card className="flex w-[416px] flex-col gap-6 border-none shadow-none">
+    <Card className="flex w-full max-w-[440px] flex-col gap-7 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.35)]">
       <DynamicCardHeader
         title="Log in"
         description="Log in to enjoy your favorite dishes."
@@ -100,15 +100,17 @@ export const Login = () => {
             <Button
               type="button"
               variant="link"
-              className="w-fit p-0 underline"
+              className="ml-auto h-auto w-fit p-0 text-sm font-medium text-[#2563EB] underline-offset-4 hover:underline"
               onClick={navigateToForgotPassword}
             >
-              Forgot password ?
+              Forgot password?
             </Button>
           </div>
 
           {submitError && (
-            <p className="text-sm font-medium text-red-500">{submitError}</p>
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+              {submitError}
+            </div>
           )}
 
           <FooterButtons

@@ -85,7 +85,7 @@ export function DataTable<TData extends { _id: string }, TValue>({
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                 </TableHead>
               ))}

@@ -1,19 +1,23 @@
 "use client";
 
-import { Pencil } from "lucide-react";
+import { UpdateFoodModal } from "./UpdateFood";
 
 type AdminFoodCardProps = {
+  id: string;
   image: string;
   foodName: string;
   ingredients: string;
   price: number;
+  onSuccess?: () => void | Promise<void>;
 };
 
 export const AdminFoodCard = ({
+  id,
   image,
   foodName,
   ingredients,
   price,
+  onSuccess,
 }: AdminFoodCardProps) => {
   return (
     <div className="flex min-w-full flex-col gap-5 rounded-[20px] border border-border bg-background p-4">
@@ -23,12 +27,14 @@ export const AdminFoodCard = ({
           backgroundImage: `url(${image})`,
         }}
       >
-        <button
-          type="button"
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-background"
-        >
-          <Pencil color="#EF4444" />
-        </button>
+        <UpdateFoodModal
+          id={id}
+          image={image}
+          foodName={foodName}
+          ingredients={ingredients}
+          price={price}
+          onSuccess={onSuccess}
+        />
       </div>
 
       <div className="flex flex-col gap-2">

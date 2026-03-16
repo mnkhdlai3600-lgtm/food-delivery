@@ -123,12 +123,14 @@ export const columns: ColumnDef<AllFoodOrders>[] = [
         <DeliveryStatus
           status={cell.row.original.status}
           orderId={cell.row.original._id}
-          setFoodOrders={
+          setFoodOrdersAction={
             (
               cell.table.options.meta as {
-                setFoodOrders: Dispatch<SetStateAction<AllFoodOrders[]>>;
+                setFoodOrdersAction?: Dispatch<
+                  SetStateAction<AllFoodOrders[] | undefined>
+                >;
               }
-            )?.setFoodOrders
+            )?.setFoodOrdersAction
           }
         />
       </div>

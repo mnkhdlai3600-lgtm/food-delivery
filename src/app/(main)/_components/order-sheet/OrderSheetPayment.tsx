@@ -28,7 +28,7 @@ export const OrderSheetPayment = ({
   const { totalPrice, cartData, clearCart } = useContext(CartContext);
   const { user } = useContext(UserContext);
 
-  const totalPriceWithFee = Number(totalPrice) + 5000;
+  const totalPriceWithFee = Number(totalPrice) || 0;
 
   const handleCreateOrder = async () => {
     if (!user) {

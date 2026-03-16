@@ -39,11 +39,12 @@ export const ForgotPasswordEmailCard = ({
   };
 
   return (
-    <Card className="w-[416px] border-none shadow-none gap-6 flex flex-col">
+    <Card className="flex w-full max-w-[440px] flex-col gap-7 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.35)]">
       <DynamicCardHeader
         title="Reset your password"
         description="Enter your email to receive a password reset link."
       />
+
       <CardContent className="p-0">
         <form
           onSubmit={(e) => {
@@ -52,12 +53,14 @@ export const ForgotPasswordEmailCard = ({
           }}
           className="flex flex-col gap-6"
         >
-          <div className="grid items-center w-full">
+          <div className="grid items-center gap-4">
             <FormInput {...emailInputProps} />
           </div>
 
           {submitError && (
-            <p className="text-sm font-medium text-red-500">{submitError}</p>
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+              {submitError}
+            </div>
           )}
 
           <FooterButtons
@@ -66,6 +69,7 @@ export const ForgotPasswordEmailCard = ({
           />
         </form>
       </CardContent>
+
       <LoginFooter />
     </Card>
   );

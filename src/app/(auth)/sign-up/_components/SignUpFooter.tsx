@@ -12,13 +12,14 @@ export const SignUpFooter = () => {
   };
 
   return (
-    <CardFooter className="flex flex-col justify-center gap-6 p-0">
-      <div className="flex items-center gap-3">
-        <p className="text-muted-foreground">Already have an account?</p>
+    <CardFooter className="flex flex-col justify-center gap-4 border-t border-slate-100 p-0 pt-6">
+      <div className="flex items-center justify-center gap-2">
+        <p className="text-sm text-muted-foreground">
+          Already have an account?
+        </p>
         <Button
           variant="link"
-          className="text-[#2563EB] text-base"
-          size="icon"
+          className="h-auto p-0 text-base font-semibold text-[#2563EB] underline-offset-4 hover:underline"
           onClick={jumpToLogin}
         >
           Login

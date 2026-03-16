@@ -78,10 +78,12 @@ export const AdminFoodsSection = () => {
             {category.foodIds?.map((food) => (
               <div key={food._id} className="flex gap-2">
                 <AdminFoodCard
+                  id={food._id}
                   image={food.image}
                   price={food.price}
                   ingredients={food.ingredients}
                   foodName={food.foodName}
+                  onSuccess={getFoods}
                 />
               </div>
             ))}

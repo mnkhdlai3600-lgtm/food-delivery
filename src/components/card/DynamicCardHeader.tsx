@@ -10,9 +10,15 @@ export const DynamicCardHeader = ({
   description,
 }: DynamicCardHeaderProps) => {
   return (
-    <CardHeader className="p-0">
-      <CardTitle className="text-2xl">{title}</CardTitle>
-      <CardDescription className="text-base">{description}</CardDescription>
+    <CardHeader className="space-y-2 p-0">
+      <CardTitle className="text-2xl font-semibold tracking-tight text-slate-900">
+        {title}
+      </CardTitle>
+      {description ? (
+        <CardDescription className="text-base leading-7 text-slate-500">
+          {description}
+        </CardDescription>
+      ) : null}
     </CardHeader>
   );
 };

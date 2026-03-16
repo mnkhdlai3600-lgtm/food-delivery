@@ -3,7 +3,7 @@
 import { updateOrder } from "@/lib/services/update-order";
 import { AllFoodOrders, FoodOrderStatusEnum } from "@/types";
 import { ChevronsUpDown } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -13,9 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { getBorderColor } from "@/lib";
 
 type DeliveryStatusProps = {
-  status: FoodOrderStatusEnum;
+  status?: FoodOrderStatusEnum;
   orderId: string;
-  setFoodOrders: Dispatch<SetStateAction<AllFoodOrders[]>>;
+  setFoodOrdersAction?: Dispatch<SetStateAction<AllFoodOrders[] | undefined>>;
 };
 
 const statusOptions = Object.values(FoodOrderStatusEnum);
@@ -23,26 +23,33 @@ const statusOptions = Object.values(FoodOrderStatusEnum);
 const DeliveryStatus = ({
   status,
   orderId,
-  setFoodOrders,
+  setFoodOrdersAction,
 }: DeliveryStatusProps) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const currentStatus = useMemo(
+    () => status ?? FoodOrderStatusEnum.PENDING,
+    [status],
+  );
+
   const handleSaveStatus = async (option: FoodOrderStatusEnum) => {
-    if (status === option || loading) return;
+    if (currentStatus === option || loading || !setFoodOrdersAction) return;
 
     try {
       setLoading(true);
 
       const updatedOrder = await updateOrder(orderId, { status: option });
 
-      setFoodOrders((prev) =>
-        prev.map((order) =>
+      setFoodOrdersAction((prev) => {
+        if (!prev) return prev;
+
+        return prev.map((order) =>
           order._id === orderId
             ? { ...order, status: updatedOrder?.status || option }
             : order,
-        ),
-      );
+        );
+      });
 
       setPopoverOpen(false);
     } catch (error) {
@@ -57,27 +64,28 @@ const DeliveryStatus = ({
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="border rounded-full px-2.5 flex items-center text-primary h-8 text-xs font-semibold gap-2.5 cursor-pointer"
-          style={{ borderColor: getBorderColor(status) }}
+          className="flex h-8 cursor-pointer items-center gap-2.5 rounded-full border px-2.5 text-xs font-semibold text-primary"
+          style={{ borderColor: getBorderColor(currentStatus) }}
         >
-          <p>{status.toUpperCase()}</p>
+          <p>{currentStatus.toUpperCase()}</p>
           <ChevronsUpDown size={16} />
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="flex flex-col p-1 w-[140px]" align="start">
+      <PopoverContent className="flex w-[140px] flex-col p-1" align="start">
         {statusOptions.map((option) => (
           <button
             key={option}
             type="button"
-            className="flex items-center p-2 rounded-sm cursor-pointer hover:bg-black/15"
+            className="flex cursor-pointer items-center rounded-sm p-2 hover:bg-black/15"
             onClick={() => handleSaveStatus(option)}
+            disabled={loading}
           >
             <Badge
               variant="secondary"
-              className="text-xs font-medium rounded-full"
+              className="rounded-full text-xs font-medium"
             >
-              {option.charAt(0).toUpperCase() + option.slice(1)}
+              {option.charAt(0).toUpperCase() + option.slice(1).toLowerCase()}
             </Badge>
           </button>
         ))}
